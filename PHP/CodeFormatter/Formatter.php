@@ -1,7 +1,7 @@
 <?php
 Namespace PHP\CodeFormatter;
 
-use PHP\CodeFormatter\Standards\StandardInterface;
+use PHP\CodeFormatter\Standards\AbstractStandard;
 
 class Formatter
 {
@@ -9,7 +9,7 @@ class Formatter
 	
 	protected $standard;
 	
-	public function __construct(Tokenizer $tokenizer, StandardInterface $standard)
+	public function __construct(Tokenizer $tokenizer, AbstractStandard $standard)
 	{
 		$this->tokenizer = $tokenizer;
 		$this->standard = $standard;
@@ -36,7 +36,7 @@ class Formatter
 	
 	protected function buildMethodName($name)
 	{
-		$name = strtolower(substr($name, 2));
+		$name = strtolower($name);
 		$splittedName = explode('_', $name);
 		
 		$parts = count($splittedName);
