@@ -1,0 +1,7 @@
+#!/usr/local/zend/bin/php
+<?php
+require 'PHP/CodeFormatter/Autoload.php';
+
+use PHP\CodeFormatter\Command;
+
+Command::main();

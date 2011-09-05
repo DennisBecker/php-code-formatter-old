@@ -56,6 +56,11 @@ use PHP\CodeFormatter\Token;
  */
 abstract class AbstractStandard{
 	
-	abstract public function tOpenTag(Token $token);
+	protected $newLineCharacter;
+	protected $indentCharacter;
+	protected $indentWidth;
+	
 	abstract public function tClass(Token $token);
+	abstract public function tOpenTag(Token $token);
+	abstract public function tString(Token $token);
 }

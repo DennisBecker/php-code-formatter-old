@@ -72,7 +72,12 @@ class Pear extends AbstractStandard {
 	}
 	
 	public function tClass(Token $token) {
-		var_dump($token->getPreviousToken());
+		return $token->getContent();
+	}
+	
+	public function tString(Token $token)
+	{
+		return " " . $token->getContent();
 	}
 	
 	public function addNewLine() {

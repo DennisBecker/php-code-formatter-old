@@ -26,12 +26,13 @@ class Formatter
 			if (method_exists($this->standard, $methodName)) {
 				$output .= $this->standard->$methodName($token);
 			} else {
-				var_dump($methodName);
+				echo "Unimplemented method '$methodName'\n";
+				var_dump($token);
 				die();
 			}
-			
-			var_dump($output);
 		}
+		
+		var_dump($output);
 	}
 	
 	protected function buildMethodName($name)

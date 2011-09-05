@@ -94,4 +94,8 @@ class Token {
 	public function getContent() {
 		return $this->content;
 	}
+	
+	public function getPreviousToken() {
+		return $this->previousToken;
+	}
 }
