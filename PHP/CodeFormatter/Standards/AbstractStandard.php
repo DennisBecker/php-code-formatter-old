@@ -54,13 +54,37 @@ use PHP\CodeFormatter\Token;
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       https://github.com/DennisBecker/php-code-formatter
  */
-abstract class AbstractStandard{
-	
+abstract class AbstractStandard
+{	
 	protected $newLineCharacter;
 	protected $indentCharacter;
 	protected $indentWidth;
+	protected $currentIndent = 0;
+	private $isNewline = false;
 	
-	abstract public function tClass(Token $token);
-	abstract public function tOpenTag(Token $token);
-	abstract public function tString(Token $token);
+	protected function addNewLineAndIndent()
+	{
+		return $this->addNewLine() . $this->addIndent();
+	}
+	
+	protected function addNewLine() {
+		$this->isNewline = true;
+		return $this->newLineCharacter;
+	}
+	
+	public function addIndent() {
+		return str_pad($this->indentCharacter, $this->indentWidth*$this->currentIndent, $this->indentCharacter, STR_PAD_LEFT);
+	}
+	
+	public function increaseIndent() {
+		++$this->currentIndent;
+	}
+	
+	protected function decreaseIndent() {
+		--$this->currentIndent;
+	}
+	
+	abstract protected function tClass(Token $token);
+	abstract protected function tOpenTag(Token $token);
+	abstract protected function tString(Token $token);
 }

@@ -46,7 +46,7 @@ namespace PHP\CodeFormatter\Standards;
 use PHP\CodeFormatter\Token;
 
 /**
- * 
+ * PEAR Coding Standard
  *
  * @package    PHP_CodeFormatter
  * @author     Dennis Becker
@@ -60,19 +60,41 @@ class Pear extends AbstractStandard {
 	protected $indentCharacter = ' ';
 	protected $indentWidth = 4;
 	
-	public function setNewLineCharacter($string)
+	public function getOpenTag()
 	{
-		$this->newLineCharacter = $string;
+		return '<?php';
 	}
 	
-	public function tOpenTag(Token $token) {
-		$output = '<?php' . $this->addNewLine();
-		
-		return $output;
+	public function tOpenTag(Token $token)
+	{
+		return '<?php' . $this->addNewLineAndIndent();
 	}
 	
-	public function tClass(Token $token) {
+	public function isClassOpenCurlyBracketOnSameLine()
+	{
+		return true;
+	}
+	
+	public function isFunctionOpenCurlyBracketOnSameLine()
+	{
+		return true;
+	}
+	
+	public function tClass(Token $token)
+	{
 		return $token->getContent();
+	}
+	
+	public function tClassOpenCurlyBracket(Token $token)
+	{
+		$this->increaseIndent();
+		return " " . $token->getContent() . $this->addNewLineAndIndent();
+	}
+	
+	public function tClassCloseCurlyBracket(Token $token)
+	{
+		$this->decreaseIndent();
+		return $this->addIndent() . $token->getContent() . $this->addNewLineAndIndent();
 	}
 	
 	public function tString(Token $token)
@@ -80,11 +102,117 @@ class Pear extends AbstractStandard {
 		return " " . $token->getContent();
 	}
 	
-	public function addNewLine() {
-		return $this->newLineCharacter;
+	public function tPublic(Token $token)
+	{
+		return $token->getContent() . " ";
 	}
 	
-	public function increaseIndent() {
-		
+	public function tFunction(Token $token)
+	{
+		return $token->getContent();
+	}
+	
+	public function tStringOpenRoundBracket(Token $token)
+	{
+		return $token->getContent();
+	}
+	
+	public function tStringCloseRoundBracket(Token $token)
+	{
+		return $token->getContent(); 
+	}
+	
+	public function tVariable(Token $token)
+	{
+		return $token->getContent();
+	}
+	
+	public function tComma(Token $token)
+	{
+		return $token->getContent() . " ";
+	}
+	
+	public function tFunctionOpenCurlyBracket(Token $token)
+	{
+		$this->increaseIndent();
+		return $token->getContent() . $this->addNewLineAndIndent();
+	}
+	
+	public function tFunctionCloseCurlyBracket(Token $token)
+	{
+		$this->decreaseIndent();
+		return $token->getContent() . $this->addNewLineAndIndent();
+	}
+	
+	public function tIf(Token $token)
+	{
+		return $token->getContent() . " ";
+	}
+	
+	public function tIfOpenRoundBracket(Token $token)
+	{
+		return $token->getContent();
+	}
+	
+	public function tIfCloseRoundBracket(Token $token)
+	{
+		return $token->getContent(); 
+	}
+	
+	public function tIfOpenCurlyBracket(Token $token)
+	{
+		$this->increaseIndent();
+		return " " . $token->getContent() . $this->addNewLineAndIndent();
+	}
+	
+	public function tIfCloseCurlyBracket(Token $token)
+	{
+		$this->decreaseIndent();
+		return $token->getContent() . $this->addNewLineAndIndent();
+	}
+	
+	public function tExcalmationMark(Token $token)
+	{
+		return $token->getContent(); 
+	}
+	
+	public function tBooleanOr(Token $token)
+	{
+		return " " . $token->getContent() . " "; 
+	}
+	
+	public function tBooleanAnd(Token $token)
+	{
+		return " " . $token->getContent() . " "; 
+	}
+	
+	public function tThrow(Token $token)
+	{
+		return $token->getContent() . " ";
+	}
+	
+	public function tNew(Token $token)
+	{
+		return $token->getContent();
+	}
+	
+	public function tConstantEncapsedString(Token $token)
+	{
+		return $token->getContent();
+	}
+	
+	public function tSemicolon(Token $token)
+	{
+		return $token->getContent() . $this->addNewLineAndIndent();
+	}
+	
+	public function tReturn(Token $token)
+	{
+		return $token->getContent() . " ";
+	}
+	
+	public function tPlus(Token $token)
+	{
+		return $token->getContent();
 	}
 }
