@@ -46,9 +46,11 @@ namespace PHP\CodeFormatter;
 use PHP\CodeFormatter\Formatter;
 use PHP\CodeFormatter\Tokenizer;
 use PHP\CodeFormatter\Standards\StandardsFactory;
+use \TheSeer\Tools\DirectoryScanner;
 
 require 'Console/CommandLine.php';
 require 'PHP/Timer.php';
+require 'TheSeer/DirectoryScanner/autoload.php';
 
 /**
  * Command line utility class
@@ -71,28 +73,28 @@ class Command
 	 */
 	public static function main()
 	{
-		static::$parser = new \Console_CommandLine();
-		static::$parser->description = 'PHP_CodeFormatter 0.1 by Dennis Becker';
-		static::$parser->version = '0.1';
-		static::$parser->addOption('standard', array(
+		self::$parser = new \Console_CommandLine();
+		self::$parser->description = 'PHP_CodeFormatter 0.1 by Dennis Becker';
+		self::$parser->version = '0.1';
+		self::$parser->addOption('standard', array(
 		    'long_name'   => '--standard',
 		    'description' => 'Coding Standard like PEAR',
 		    'action'      => 'StoreString'
 		));
-		static::$parser->addOption('output', array(
+		self::$parser->addOption('output', array(
 		    'long_name'   => '--output',
 		    'description' => 'Output directory of modified files',
 		    'action'      => 'StoreString'
 		));
-		static::$parser->addArgument(
+		self::$parser->addArgument(
 			'directory'
 		);
 		try {
-		    $result = static::$parser->parse();
+		    $result = self::$parser->parse();
 		    
-		    static::run($result->options['standard'], $result->args['directory'], $result->options['output']);
+		    self::run($result->options['standard'], $result->args['directory'], $result->options['output']);
 		} catch (\Exception $exc) {
-		    static::$parser->displayError($exc->getMessage());
+		    self::$parser->displayError($exc->getMessage());
 		}
 	}
 	
@@ -108,8 +110,42 @@ class Command
 		$tokenizer = new Tokenizer();
 		$standard = StandardsFactory::getInstanceFor($codingStandard);
 		$formatter = new Formatter($tokenizer, $standard);
-		$source = file_get_contents('tests/_testdata/Calculator.php');
-		$formatter->format($source);
-		static::$parser->outputter->stdout(\PHP_Timer::resourceUsage()."\n");
+		$scanner = new DirectoryScanner();
+		$scanner->addInclude('*.php');
+		
+		if ($outputDirectory !== null) {
+			$dir = explode('/', $outputDirectory);
+			$outputDirectory = implode('/', $dir) . '/';
+			
+			self::createDirectory($outputDirectory);
+		}
+		
+		foreach ($scanner($directory) as $file) {
+			$source = file_get_contents($file->getPathname());
+			$formattedSourceCode = $formatter->format($source);
+			
+			$path = explode('/', $file->getPath());
+			$folderStructureCount = count($path);
+			if ($folderStructureCount > 0) {
+				$path[0] = $outputDirectory.$path[0];
+				self::createDirectory($path[0]);
+			}
+			
+			for ($i = 1; $i < $folderStructureCount; $i++) {
+				$path[$i] = $path[$i-1].'/'.$path[$i];
+				self::createDirectory($path[$i]);
+			}
+			
+			file_put_contents($outputDirectory.$file->getPathname(), $formattedSourceCode);
+		}
+
+		self::$parser->outputter->stdout(\PHP_Timer::resourceUsage()."\n");
+	}
+	
+	protected static function createDirectory($path)
+	{
+		if(!is_dir($path)) {
+			mkdir($path);
+		}
 	}
 }

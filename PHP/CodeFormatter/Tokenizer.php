@@ -76,10 +76,12 @@ class Tokenizer
 	 * 
 	 * @param string $source
 	 */
-	public function tokenize($source) {
-		$tokenizedSource = token_get_all($source);
-		
+	public function tokenize($source)
+	{
 		$tokenCollection = array();
+		$this->curlyBracketStack = array();
+		$this->roundBracketStack = array();
+		$tokenizedSource = token_get_all($source);
 		
 		foreach ($tokenizedSource as $key => $sourceToken) {
 			
@@ -99,6 +101,7 @@ class Tokenizer
 			}
 			
 			$tokenCollection[] = new Token($parsedSourceToken[3], $parsedSourceToken[1]);
+			$this->tokenCollection = $tokenCollection;
 		}
 		
 		return $tokenCollection;
@@ -113,6 +116,9 @@ class Tokenizer
 	{
 		switch ($tokenName) {
 			case 'T_CLASS':
+			case 'T_ELSE':
+			case 'T_CASE':
+			case 'T_TRY':
 				array_unshift($this->curlyBracketStack, $tokenName);
 				break;
 			case 'T_ARRAY':
@@ -121,6 +127,10 @@ class Tokenizer
 				break;
 			case 'T_FUNCTION':
 			case 'T_IF':
+			case 'T_FOR':
+			case 'T_FOREACH':
+			case 'T_SWITCH':
+			case 'T_CATCH':
 				array_unshift($this->roundBracketStack, $tokenName);
 				array_unshift($this->curlyBracketStack, $tokenName);
 				break;
@@ -140,6 +150,12 @@ class Tokenizer
 				$tokenName = $this->curlyBracketStack[0].'_OPEN_CURLY_BRACKET';
 				break;
 			case '}':
+				if(empty($this->curlyBracketStack)) {
+					var_dump($sourceString);
+					var_dump(count($this->tokenCollection));
+					var_dump($this->tokenCollection[201]);
+					die();
+				}
 				$tokenName = array_shift($this->curlyBracketStack).'_CLOSE_CURLY_BRACKET';
 				break;
 			case '(':
@@ -154,11 +170,33 @@ class Tokenizer
 			case '!':
 				$tokenName = 'T_EXCALMATION_MARK';
 				break;
+			case '.':
+				$tokenName = 'T_DOT';
+				break;
+			case ':':
+				$tokenName = 'T_COLON';
+				break;
 			case ';':
 				$tokenName = 'T_SEMICOLON';
 				break;
 			case '+':
 				$tokenName = 'T_PLUS';
+				break;
+			case '-':
+			case '>':
+				$tokenName = 'T_GT';
+				break;
+			case '<':
+				$tokenName = 'T_LT';
+				break;
+			case '=':
+				$tokenName = 'T_EQUAL';
+				break;
+			case '[':
+				$tokenName = 'T_OPEN_SQUARE_BRACKET';
+				break;
+			case ']':
+				$tokenName = 'T_CLOSE_SQUARE_BRACKET';
 				break;
 			default:
 				var_dump($sourceString);

@@ -88,16 +88,17 @@ class Formatter
 	public function format($source)
 	{
 		$tokens = $this->tokenizer->tokenize($source);
+		$this->standard->resetIndentation();
 		$this->lines = array();
 		$this->line = new SourceCodeLine($this->standard->getIndentationCharacter(),
 			$this->standard->getIndentationWidth(), 0);
-		$lastTokenBracket = array();
 		
 		foreach ($tokens as $token) {
 			$tokenName = $token->getName();
 			$methodName = $this->buildMethodName($tokenName);
 			
 			if ($this->standard->addEmptyLineBefore($tokenName)) {
+				$this->line->addContent(null);
 				$this->newLine();
 			}
 			
@@ -119,7 +120,7 @@ class Formatter
 				$this->line->addContent(' ');
 			}
 			
-			$this->line->addContent($token->getContent());
+			$this->line->addContent($this->standard->$methodName($token));
 			
 			if ($this->standard->increaseNextLine($tokenName)) {
 				$this->standard->increaseIndentation();
@@ -139,14 +140,18 @@ class Formatter
 			
 			if ($this->standard->addEmptyLineAfter($tokenName)) {
 				$this->newLine();
+				$this->line->addContent(null);
 			}
 		}
 		
 		unset($this->line);
 
+		$output = '';
 		foreach ($this->lines as $line) {
-			echo $line->getLine();
+			$output .= $line->getLine();
 		}
+		
+		return $output;
 	}
 	
 	protected function newLine()

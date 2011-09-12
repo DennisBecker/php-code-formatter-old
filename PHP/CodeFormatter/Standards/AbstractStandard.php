@@ -156,6 +156,11 @@ abstract class AbstractStandard
 		
 		return false;
 	}
+	
+	public function resetIndentation()
+	{
+		$this->currentIndent = 0;
+	}
 		
 	public function getIndentation()
 	{
@@ -180,5 +185,14 @@ abstract class AbstractStandard
 	public function decreaseIndentation()
 	{
 		$this->currentIndent--;
+	}
+	
+	public function __call($method, $params)
+	{
+		if(0 === strpos($method, 't')) {
+			return $params[0]->getContent();
+		}
+		
+		throw new \LogicException('Invalid token methodName "' . $method . '" for token ' . var_export($params, true));
 	}
 }

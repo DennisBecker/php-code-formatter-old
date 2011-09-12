@@ -36,6 +36,10 @@ class SourceCodeLine
 			}
 		}
 		
+		if (empty($this->content)) {
+			return $indentation . "\n";
+		}
+		
 		return $indentation . implode('', $this->content) . "\n";
 	}
 }
