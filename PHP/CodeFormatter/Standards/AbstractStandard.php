@@ -60,31 +60,125 @@ abstract class AbstractStandard
 	protected $indentCharacter;
 	protected $indentWidth;
 	protected $currentIndent = 0;
-	private $isNewline = false;
+	protected $newLineBefore = array();
+	protected $newLineAfter = array();
+	protected $emptyLineBefore = array();
+	protected $emptyLineAfter = array();
+	protected $spaceBefore = array();
+	protected $spaceAfter = array();
 	
-	protected function addNewLineAndIndent()
+	public function addEmptyLineBefore($name)
 	{
-		return $this->addNewLine() . $this->addIndent();
+		if (in_array($name, $this->emptyLineBefore)) {
+			return true;
+		}
+		
+		return false;
 	}
 	
-	protected function addNewLine() {
-		$this->isNewline = true;
-		return $this->newLineCharacter;
+	public function addEmptyLineAfter($name)
+	{
+		if (in_array($name, $this->emptyLineAfter)) {
+			return true;
+		}
+		
+		return false;
 	}
 	
-	public function addIndent() {
-		return str_pad($this->indentCharacter, $this->indentWidth*$this->currentIndent, $this->indentCharacter, STR_PAD_LEFT);
+	public function addNewLineBefore($name)
+	{
+		if (in_array($name, $this->newLineBefore)) {
+			return true;
+		}
+		
+		return false;
 	}
 	
-	public function increaseIndent() {
-		++$this->currentIndent;
+	public function addNewLineAfter($name)
+	{
+		if (in_array($name, $this->newLineAfter)) {
+			return true;
+		}
+		
+		return false;
 	}
 	
-	protected function decreaseIndent() {
-		--$this->currentIndent;
+	public function addSpaceBefore($name)
+	{
+		if (in_array($name, $this->spaceBefore)) {
+			return true;
+		}
+		
+		return false;
 	}
 	
-	abstract protected function tClass(Token $token);
-	abstract protected function tOpenTag(Token $token);
-	abstract protected function tString(Token $token);
+	public function addSpaceAfter($name)
+	{
+		if (in_array($name, $this->spaceAfter)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public function increaseThisLine($name)
+	{
+		if (in_array($name, $this->increaseThisLine)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public function increaseNextLine($name)
+	{
+		if (in_array($name, $this->increaseNextLine)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public function decreaseThisLine($name)
+	{
+		if (in_array($name, $this->decreaseThisLine)) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public function decreaseNextLine($name)
+	{
+		if (in_array($name, $this->decreaseNextLine)) {
+			return true;
+		}
+		
+		return false;
+	}
+		
+	public function getIndentation()
+	{
+		return $this->currentIndent;
+	}
+	
+	public function getIndentationCharacter()
+	{
+		return $this->indentCharacter;
+	}
+	
+	public function getIndentationWidth()
+	{
+		return $this->indentWidth;
+	}
+	
+	public function increaseIndentation()
+	{
+		$this->currentIndent++;
+	}
+	
+	public function decreaseIndentation()
+	{
+		$this->currentIndent--;
+	}
 }

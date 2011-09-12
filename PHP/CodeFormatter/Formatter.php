@@ -43,6 +43,7 @@
 
 namespace PHP\CodeFormatter;
 
+use PHP\CodeFormatter\SourceCodeLine;
 use PHP\CodeFormatter\Tokenizer;
 use PHP\CodeFormatter\Standards\AbstractStandard;
 
@@ -87,106 +88,72 @@ class Formatter
 	public function format($source)
 	{
 		$tokens = $this->tokenizer->tokenize($source);
-		$output = '';
-		
-//		$lines = array();
-//		$indentLine = false;
-//		$indentNextLine = false;
-//		$usedKeys = array();
-//		foreach ($tokens as $key => $token) {
-//			if(in_array($key, $usedKeys)) {
-//				continue;
-//			}
-//			
-//			if ($indentNextLine) {
-//				$indentLine = true;
-//				$indentNextLine = false;
-//			}
-//			
-//			$lineCount = count($lines);
-//			$lines[$lineCount] = '';
-//			switch ($token->getName()) {
-//				case 'T_OPEN_TAG':
-//					$lines[$lineCount] .= $this->standard->getOpenTag();
-//					break;
-//				case 'T_CLASS':
-//					$usedKeys[] = $key+1;
-//					$lines[$lineCount] .= $token->getContent() . " " . $tokens[$key+1]->getContent();
-//					break;
-//				case 'T_CLASS_OPEN_CURLY_BRACKET':
-//					if($this->standard->isClassOpenCurlyBracketOnSameLine()) {
-//						$lines[$lineCount-1] .= " " . $token->getContent();
-//						unset($lines[$lineCount]);
-//					} else {
-//						$lines[$lineCount] .= $token->getContent();
-//					}
-//					
-//					$this->standard->increaseIndent();
-//					$indentNextLine = true;
-//					break;
-//				case 'T_PUBLIC':
-//					$lines[$lineCount] .= $token->getContent() . " ";
-//					$i = 1;
-//					$addStrings = array();
-//					while ($tokens[$key+$i]->getContent() != '(') {
-//						$usedKeys[] = $key+$i;
-//						$addStrings[] = $tokens[$key+$i]->getContent();
-//						++$i;
-//					}
-//					$lines[$lineCount] .= implode(' ', $addStrings);
-////					var_dump($tokens[$key+$i]->getContent());
-////					$lines[$lineCount] .= $tokens[$key+$i]->getContent();
-////					$usedKeys[] = $key+$i;
-//					
-//					while ($tokens[$key+$i]->getContent() != '{') {
-//						$usedKeys[] = $key+$i;
-//						$lines[$lineCount] .= $tokens[$key+$i]->getContent();
-//						if ($tokens[$key+$i]->getContent() == ',') {
-//							$lines[$lineCount] .= " ";
-//						}
-//						++$i;
-//					}
-//					break;
-//				case 'T_FUNCTION_OPEN_CURLY_BRACKET':
-//					if($this->standard->isFunctionOpenCurlyBracketOnSameLine()) {
-//						$lines[$lineCount-1] .= " " . $token->getContent();
-//						unset($lines[$lineCount]);
-//					} else {
-//						$lines[$lineCount] .= $token->getContent();
-//					}
-//					
-//					$this->standard->increaseIndent();
-//					break;
-//				case 'T_IF':
-//					$lines[$lineCount] .= $token->getContent();
-//					break;
-//				default:
-//					var_dump($token);
-//					var_dump($lines);
-//					die();
-//			}
-//			
-//			if($indentLine && $lines[$lineCount] != '') {
-//				$lines[$lineCount] = $this->standard->addIndent() . $lines[$lineCount];
-//			}
-//		}
-//		
-//		var_dump($lines);
-//		die();
+		$this->lines = array();
+		$this->line = new SourceCodeLine($this->standard->getIndentationCharacter(),
+			$this->standard->getIndentationWidth(), 0);
+		$lastTokenBracket = array();
 		
 		foreach ($tokens as $token) {
+			$tokenName = $token->getName();
+			$methodName = $this->buildMethodName($tokenName);
 			
-			$methodName = $this->buildMethodName($token->getName());
-			if (method_exists($this->standard, $methodName)) {
-				$output .= $this->standard->$methodName($token);
-			} else {
-				echo "Unimplemented method '$methodName'\n";
-				var_dump($token);
-				die();
+			if ($this->standard->addEmptyLineBefore($tokenName)) {
+				$this->newLine();
+			}
+			
+			if ($this->standard->addNewLineBefore($tokenName)) {
+				$this->newLine();
+			}
+			
+			if ($this->standard->increaseThisLine($tokenName)) {
+				$this->standard->increaseIndentation();
+				$this->line->setIndentation($this->standard->getIndentation());
+			}
+			
+			if ($this->standard->decreaseThisLine($tokenName)) {
+				$this->standard->decreaseIndentation();
+				$this->line->setIndentation($this->standard->getIndentation());
+			}
+			
+			if ($this->standard->addSpaceBefore($tokenName)) {
+				$this->line->addContent(' ');
+			}
+			
+			$this->line->addContent($token->getContent());
+			
+			if ($this->standard->increaseNextLine($tokenName)) {
+				$this->standard->increaseIndentation();
+			}
+			
+			if ($this->standard->decreaseNextLine($tokenName)) {
+				$this->standard->decreaseIndentation();
+			}
+			
+			if ($this->standard->addSpaceAfter($tokenName)) {
+				$this->line->addContent(' ');
+			}
+			
+			if ($this->standard->addNewLineAfter($tokenName)) {
+				$this->newLine();
+			}
+			
+			if ($this->standard->addEmptyLineAfter($tokenName)) {
+				$this->newLine();
 			}
 		}
 		
-		var_dump($output);
+		unset($this->line);
+
+		foreach ($this->lines as $line) {
+			echo $line->getLine();
+		}
+	}
+	
+	protected function newLine()
+	{
+		$this->lines[] = $this->line;
+		$this->line = new SourceCodeLine($this->standard->getIndentationCharacter(),
+			$this->standard->getIndentationWidth(), $this->standard->getIndentation());
 	}
 	
 	/**

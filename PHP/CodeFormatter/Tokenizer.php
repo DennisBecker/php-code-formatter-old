@@ -82,6 +82,7 @@ class Tokenizer
 		$tokenCollection = array();
 		
 		foreach ($tokenizedSource as $key => $sourceToken) {
+			
 			if ($sourceToken[0] === T_WHITESPACE) {
 				continue;
 			}
@@ -89,7 +90,7 @@ class Tokenizer
 			$parsedSourceToken = array();
 			
 			if (is_array($sourceToken)) {
-				$parsedSourceToken = array_map('trim', $sourceToken);
+				$parsedSourceToken = $sourceToken;
 				$parsedSourceToken[3] = token_name($sourceToken[0]);
 				
 				$this->addTokenOntoStack($parsedSourceToken[3]);
