@@ -17,7 +17,7 @@
  *     the documentation and/or other materials provided with the
  *     distribution.
  *
- *   * Neither the name of Dennis Becker nor the names of his
+ *   * Neither the name of Sebastian Bergmann nor the names of his
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -121,6 +121,7 @@ class Command
 		}
 		
 		foreach ($scanner($directory) as $file) {
+			echo $file->getPathname()."\n";
 			$source = file_get_contents($file->getPathname());
 			$formattedSourceCode = $formatter->format($source);
 			

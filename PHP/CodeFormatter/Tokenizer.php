@@ -17,7 +17,7 @@
  *     the documentation and/or other materials provided with the
  *     distribution.
  *
- *   * Neither the name of Dennis Becker nor the names of his
+ *   * Neither the name of Sebastian Bergmann nor the names of his
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -55,10 +55,6 @@ namespace PHP\CodeFormatter;
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       https://github.com/DennisBecker/php-code-formatter
  */
-use PHP\CodeFormatter\Token\ClassToken;
-
-use PHP\CodeFormatter\Token\DocCommentToken;
-
 class Tokenizer
 {
 	/**
@@ -76,13 +72,6 @@ class Tokenizer
 	protected $roundBracketStack = array();
 	
 	/**
-	 * Stack of PHP Doc comments
-	 * 
-	 * @var array
-	 */
-	protected $docCommentStack = array();
-	
-	/**
 	 * Base tokenizing method which analyzes the given source code
 	 * 
 	 * @param string $source
@@ -96,19 +85,7 @@ class Tokenizer
 		
 		foreach ($tokenizedSource as $key => $sourceToken) {
 			
-			$tokenObject = null;
 			if ($sourceToken[0] === T_WHITESPACE) {
-				continue;
-			}
-			
-			if ($sourceToken[0] === T_DOC_COMMENT) {
-				if ($sourceToken[2] == 2) {
-					$tokenCollection[0]->setDocComment($sourceToken[1]);
-				} else {
-					array_unshift($this->docCommentStack, $sourceToken[1]);
-					var_dump($sourceToken);
-				}
-				
 				continue;
 			}
 			
@@ -123,28 +100,11 @@ class Tokenizer
 				$parsedSourceToken = $this->addTokenData($sourceToken);
 			}
 			
-			$tokenClass = $this->buildTokenClassName($parsedSourceToken[3]);
-
-			if (class_exists($tokenClass)) {
-				$tokenObject = new $tokenClass($parsedSourceToken[3], $parsedSourceToken[1]);
-			} else {
-				$tokenObject = new Token($parsedSourceToken[3], $parsedSourceToken[1]);
-			}
-			
-			$this->addDocCommentToToken($tokenObject);
-			
-			$tokenCollection[] = $tokenObject;
+			$tokenCollection[] = new Token($parsedSourceToken[3], $parsedSourceToken[2], $parsedSourceToken[1]);
 			$this->tokenCollection = $tokenCollection;
 		}
 		
 		return $tokenCollection;
-	}
-	
-	protected function addDocCommentToToken($tokenObject)
-	{
-		if ($tokenObject instanceof DocCommentToken && count($this->docCommentStack) > 0) {
-			$tokenObject->setDocComment(array_shift($this->docCommentStack));
-		}
 	}
 	
 	/**
@@ -156,13 +116,19 @@ class Tokenizer
 	{
 		switch ($tokenName) {
 			case 'T_CLASS':
+			case 'T_INTERFACE':
 			case 'T_ELSE':
+			case 'T_ELSEIF':
 			case 'T_CASE':
 			case 'T_TRY':
 				array_unshift($this->curlyBracketStack, $tokenName);
 				break;
 			case 'T_ARRAY':
 			case 'T_STRING':
+			case 'T_INCLUDE':
+			case 'T_INCLUDE_ONCE':
+			case 'T_REQUIRE':
+			case 'T_REQUIRE_ONCE':
 				array_unshift($this->roundBracketStack, $tokenName);
 				break;
 			case 'T_FUNCTION':
@@ -187,18 +153,34 @@ class Tokenizer
 		$tokenName = '';
 		switch ($sourceString) {
 			case '{':
+				if(!isset($this->curlyBracketStack[0])) {
+					var_dump('OPEN BRACKET ERROR');
+					var_dump($sourceString);
+					var_dump(end($this->tokenCollection));
+					die();
+				}
 				$tokenName = $this->curlyBracketStack[0].'_OPEN_CURLY_BRACKET';
 				break;
 			case '}':
 				if(empty($this->curlyBracketStack)) {
+					var_dump('CLOSE BRACKET ERROR');
 					var_dump($sourceString);
-					var_dump(count($this->tokenCollection));
-					var_dump($this->tokenCollection[201]);
+					$count = count($this->tokenCollection);
+					var_dump($this->tokenCollection[$count-4]);
+					var_dump($this->tokenCollection[$count-3]);
+					var_dump($this->tokenCollection[$count-2]);
+					var_dump($this->tokenCollection[$count-1]);
 					die();
 				}
 				$tokenName = array_shift($this->curlyBracketStack).'_CLOSE_CURLY_BRACKET';
 				break;
 			case '(':
+				if(!isset($this->roundBracketStack[0])) {
+					var_dump('OPEN BRACKET ERROR');
+					var_dump($sourceString);
+					var_dump(end($this->tokenCollection));
+					die();
+				}
 				$tokenName = $this->roundBracketStack[0].'_OPEN_ROUND_BRACKET';
 				break;
 			case ')':
@@ -223,6 +205,8 @@ class Tokenizer
 				$tokenName = 'T_PLUS';
 				break;
 			case '-':
+				$tokenName = 'T_MINUS';
+				break;
 			case '>':
 				$tokenName = 'T_GT';
 				break;
@@ -238,6 +222,18 @@ class Tokenizer
 			case ']':
 				$tokenName = 'T_CLOSE_SQUARE_BRACKET';
 				break;
+			case '"':
+				$tokenName = 'T_DOUBLE_QUOTES';
+				break;
+			case '?':
+				$tokenName = 'T_QUESTION_MARK';
+				break;
+			case '&':
+				$tokenName = 'T_AMPERSAND';
+				break;
+			case '@':
+				$tokenName = 'T_AT';
+				break;
 			default:
 				var_dump($sourceString);
 				die("\nMissing behaviour\n");
@@ -249,18 +245,5 @@ class Tokenizer
 			'',
 			$tokenName,
 		);
-	}
-	
-	/**
-	 * Create token class name out of token
-	 * 
-	 * @param string $tokenName
-	 * @return string
-	 */
-	protected function buildTokenClassName($tokenName)
-	{
-		$split = explode('_', strtolower(str_replace('T_', '', $tokenName)));
-		
-		return 'PHP\CodeFormatter\Token\\' . implode('', array_map('ucfirst', $split)) . 'Token';
 	}
 }
