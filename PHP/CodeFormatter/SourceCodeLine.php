@@ -40,6 +40,18 @@ class SourceCodeLine
 			return $indentation . "\n";
 		}
 		
+		if(count($this->content) == 0) {
+			$multiLine = explode("\n", $this->content[0]);
+			if (count($multiLine) > 1) {
+				$output = '';
+				foreach ($multiLine as $line) {
+					$output .= $indentation . $line . "\n";
+				}
+				
+				return $output;
+			}
+		}
+		
 		return $indentation . implode('', $this->content) . "\n";
 	}
 }

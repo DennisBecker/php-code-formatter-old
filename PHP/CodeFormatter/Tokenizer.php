@@ -55,6 +55,10 @@ namespace PHP\CodeFormatter;
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       https://github.com/DennisBecker/php-code-formatter
  */
+use PHP\CodeFormatter\Token\ClassToken;
+
+use PHP\CodeFormatter\Token\DocCommentToken;
+
 class Tokenizer
 {
 	/**
@@ -72,6 +76,13 @@ class Tokenizer
 	protected $roundBracketStack = array();
 	
 	/**
+	 * Stack of PHP Doc comments
+	 * 
+	 * @var array
+	 */
+	protected $docCommentStack = array();
+	
+	/**
 	 * Base tokenizing method which analyzes the given source code
 	 * 
 	 * @param string $source
@@ -85,7 +96,19 @@ class Tokenizer
 		
 		foreach ($tokenizedSource as $key => $sourceToken) {
 			
+			$tokenObject = null;
 			if ($sourceToken[0] === T_WHITESPACE) {
+				continue;
+			}
+			
+			if ($sourceToken[0] === T_DOC_COMMENT) {
+				if ($sourceToken[2] == 2) {
+					$tokenCollection[0]->setDocComment($sourceToken[1]);
+				} else {
+					array_unshift($this->docCommentStack, $sourceToken[1]);
+					var_dump($sourceToken);
+				}
+				
 				continue;
 			}
 			
@@ -100,11 +123,28 @@ class Tokenizer
 				$parsedSourceToken = $this->addTokenData($sourceToken);
 			}
 			
-			$tokenCollection[] = new Token($parsedSourceToken[3], $parsedSourceToken[1]);
+			$tokenClass = $this->buildTokenClassName($parsedSourceToken[3]);
+
+			if (class_exists($tokenClass)) {
+				$tokenObject = new $tokenClass($parsedSourceToken[3], $parsedSourceToken[1]);
+			} else {
+				$tokenObject = new Token($parsedSourceToken[3], $parsedSourceToken[1]);
+			}
+			
+			$this->addDocCommentToToken($tokenObject);
+			
+			$tokenCollection[] = $tokenObject;
 			$this->tokenCollection = $tokenCollection;
 		}
 		
 		return $tokenCollection;
+	}
+	
+	protected function addDocCommentToToken($tokenObject)
+	{
+		if ($tokenObject instanceof DocCommentToken && count($this->docCommentStack) > 0) {
+			$tokenObject->setDocComment(array_shift($this->docCommentStack));
+		}
 	}
 	
 	/**
@@ -209,5 +249,18 @@ class Tokenizer
 			'',
 			$tokenName,
 		);
+	}
+	
+	/**
+	 * Create token class name out of token
+	 * 
+	 * @param string $tokenName
+	 * @return string
+	 */
+	protected function buildTokenClassName($tokenName)
+	{
+		$split = explode('_', strtolower(str_replace('T_', '', $tokenName)));
+		
+		return 'PHP\CodeFormatter\Token\\' . implode('', array_map('ucfirst', $split)) . 'Token';
 	}
 }

@@ -43,6 +43,9 @@
 
 namespace PHP\CodeFormatter;
 
+use PHP\CodeFormatter\Token\ClassToken;
+use PHP\CodeFormatter\Token\DocCommentToken;
+use PHP\CodeFormatter\Token\OpenTagToken;
 use PHP\CodeFormatter\SourceCodeLine;
 use PHP\CodeFormatter\Tokenizer;
 use PHP\CodeFormatter\Standards\AbstractStandard;
@@ -142,6 +145,8 @@ class Formatter
 				$this->newLine();
 				$this->line->addContent(null);
 			}
+			
+			$this->addDocComment($token);
 		}
 		
 		unset($this->line);
@@ -154,6 +159,30 @@ class Formatter
 		return $output;
 	}
 	
+	protected function addDocComment($token)
+	{
+		if($token instanceof DocCommentToken) {
+			if($token instanceof OpenTagToken) {
+				$this->line->addContent($token->getDocComment());
+				$this->newLine();
+				$this->newLine();
+			} else {
+				$this->newLine();
+				$this->line->addContent($token->getDocComment());
+				
+				$key = count($this->lines)-1;
+				$this->newLine();
+				$tmpLine = $this->line;
+				$this->line = $this->lines[$key]; 
+				$this->lines[$key] = $tmpLine;
+			}
+		}
+	}
+	
+	/**
+	 * Add current line to the lines collection and create a new
+	 * instance of SourceCodeLine
+	 */
 	protected function newLine()
 	{
 		$this->lines[] = $this->line;
@@ -169,14 +198,7 @@ class Formatter
 	 */
 	protected function buildMethodName($name)
 	{
-		$name = strtolower($name);
-		$splittedName = explode('_', $name);
-		
-		$parts = count($splittedName);
-		
-		for ($i = 1; $i < $parts; $i++) {
-			$splittedName[$i] = ucfirst($splittedName[$i]); 
-		}
+		$splittedName = explode('_', strtolower($name));
 		
 		return implode('', $splittedName);
 	}

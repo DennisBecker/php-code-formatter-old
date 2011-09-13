@@ -54,6 +54,7 @@ use PHP\CodeFormatter\Token\DocCommentToken;
  * @license    http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link       https://github.com/DennisBecker/php-code-formatter
  */
-class ClassToken extends DocCommentToken
+class OpenTagToken extends DocCommentToken
 {
+
 }
