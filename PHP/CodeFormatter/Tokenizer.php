@@ -117,27 +117,17 @@ class Tokenizer
 		switch ($tokenName) {
 			case 'T_CLASS':
 			case 'T_INTERFACE':
-			case 'T_ELSE':
-			case 'T_ELSEIF':
 			case 'T_CASE':
 			case 'T_TRY':
-				array_unshift($this->curlyBracketStack, $tokenName);
-				break;
-			case 'T_ARRAY':
-			case 'T_STRING':
-			case 'T_INCLUDE':
-			case 'T_INCLUDE_ONCE':
-			case 'T_REQUIRE':
-			case 'T_REQUIRE_ONCE':
-				array_unshift($this->roundBracketStack, $tokenName);
-				break;
+			case 'T_CATCH':
 			case 'T_FUNCTION':
 			case 'T_IF':
+			case 'T_ELSEIF':
+			case 'T_ELSE':
 			case 'T_FOR':
 			case 'T_FOREACH':
+			case 'T_WHILE':
 			case 'T_SWITCH':
-			case 'T_CATCH':
-				array_unshift($this->roundBracketStack, $tokenName);
 				array_unshift($this->curlyBracketStack, $tokenName);
 				break;
 		}
@@ -154,37 +144,23 @@ class Tokenizer
 		switch ($sourceString) {
 			case '{':
 				if(!isset($this->curlyBracketStack[0])) {
-					var_dump('OPEN BRACKET ERROR');
-					var_dump($sourceString);
-					var_dump(end($this->tokenCollection));
-					die();
+					$tokenName = 'T_OPEN_CURLY_BRACKET';
+				} else {
+					$tokenName = $this->curlyBracketStack[0].'_OPEN_CURLY_BRACKET';
 				}
-				$tokenName = $this->curlyBracketStack[0].'_OPEN_CURLY_BRACKET';
 				break;
 			case '}':
 				if(empty($this->curlyBracketStack)) {
-					var_dump('CLOSE BRACKET ERROR');
-					var_dump($sourceString);
-					$count = count($this->tokenCollection);
-					var_dump($this->tokenCollection[$count-4]);
-					var_dump($this->tokenCollection[$count-3]);
-					var_dump($this->tokenCollection[$count-2]);
-					var_dump($this->tokenCollection[$count-1]);
-					die();
+					$tokenName = 'T_CLOSE_CURLY_BRACKET';
+				} else {
+					$tokenName = array_shift($this->curlyBracketStack).'_CLOSE_CURLY_BRACKET';
 				}
-				$tokenName = array_shift($this->curlyBracketStack).'_CLOSE_CURLY_BRACKET';
 				break;
 			case '(':
-				if(!isset($this->roundBracketStack[0])) {
-					var_dump('OPEN BRACKET ERROR');
-					var_dump($sourceString);
-					var_dump(end($this->tokenCollection));
-					die();
-				}
-				$tokenName = $this->roundBracketStack[0].'_OPEN_ROUND_BRACKET';
+				$tokenName = 'T_OPEN_ROUND_BRACKET';
 				break;
 			case ')':
-				$tokenName = array_shift($this->roundBracketStack).'_CLOSE_ROUND_BRACKET';
+				$tokenName = 'T_CLOSE_ROUND_BRACKET';
 				break;
 			case ',':
 				$tokenName = 'T_COMMA';
@@ -234,7 +210,35 @@ class Tokenizer
 			case '@':
 				$tokenName = 'T_AT';
 				break;
+			case '/':
+				$tokenName = 'T_DIV';
+				break;
+			case '*':
+				$tokenName = 'T_MULT';
+				break;
+			case '^':
+				$tokenName = 'T_CARET';
+				break;
+			case '$':
+				$tokenName = 'T_DOLLAR';
+				break;
+			case '|':
+				$tokenName = 'T_PIPE';
+				break;
+			case '%':
+				$tokenName = 'T_PERCENT';
+				break;
+			case '~':
+				$tokenName = 'T_TILDE';
+				break;
+			case '`':
+				$tokenName = 'T_BACKTICK';
+				break;
 			default:
+				$count = count($this->tokenCollection);
+				var_dump($this->tokenCollection[$count-3]);
+				var_dump($this->tokenCollection[$count-2]);
+				var_dump($this->tokenCollection[$count-1]);
 				var_dump($sourceString);
 				die("\nMissing behaviour\n");
 		}

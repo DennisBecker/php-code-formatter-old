@@ -64,9 +64,16 @@ require 'TheSeer/DirectoryScanner/autoload.php';
 class Command
 {
 	/**
+	 * @var \PHP\CodeFormatter\Formatter
+	 */
+	protected static $formatter;
+	
+	/**
 	 * @var Console_CommandLine
 	 */
 	protected static $parser;
+	
+	protected static $outputDirectory;
 	
 	/**
 	 * Initializes Console_CommandLine and handles all arguments
@@ -107,40 +114,54 @@ class Command
 	 */
 	private function run($codingStandard, $directory, $outputDirectory = null)
 	{
+		$recursive = true;
 		$tokenizer = new Tokenizer();
 		$standard = StandardsFactory::getInstanceFor($codingStandard);
-		$formatter = new Formatter($tokenizer, $standard);
-		$scanner = new DirectoryScanner();
-		$scanner->addInclude('*.php');
+		self::$formatter = new Formatter($tokenizer, $standard);
 		
 		if ($outputDirectory !== null) {
-			$dir = explode('/', $outputDirectory);
-			$outputDirectory = implode('/', $dir) . '/';
+			if($outputDirectory !== null && substr($outputDirectory, -1, 1) != '/') {
+				$outputDirectory .= '/';
+			}
 			
+			self::$outputDirectory = $outputDirectory;
 			self::createDirectory($outputDirectory);
 		}
 		
-		foreach ($scanner($directory) as $file) {
-			echo $file->getPathname()."\n";
-			$source = file_get_contents($file->getPathname());
-			$formattedSourceCode = $formatter->format($source);
+		if(is_file($directory)) {
+			$file = new \SplFileInfo($directory);
+			self::parseFile($file);
+		} else {
+			$scanner = new DirectoryScanner();
+			$scanner->addInclude('*.php');
 			
-			$path = explode('/', $file->getPath());
-			$folderStructureCount = count($path);
-			if ($folderStructureCount > 0) {
-				$path[0] = $outputDirectory.$path[0];
-				self::createDirectory($path[0]);
+			foreach ($scanner($directory, $recursive) as $file) {
+				self::parseFile($file);
 			}
-			
-			for ($i = 1; $i < $folderStructureCount; $i++) {
-				$path[$i] = $path[$i-1].'/'.$path[$i];
-				self::createDirectory($path[$i]);
-			}
-			
-			file_put_contents($outputDirectory.$file->getPathname(), $formattedSourceCode);
 		}
 
 		self::$parser->outputter->stdout(\PHP_Timer::resourceUsage()."\n");
+	}
+	
+	protected static function parseFile($file)
+	{
+		echo $file->getPathname()."\n";
+		$source = file_get_contents($file->getPathname());
+		$formattedSourceCode = self::$formatter->format($source);
+		
+		$path = explode('/', $file->getPath());
+		$folderStructureCount = count($path);
+		if ($folderStructureCount > 0) {
+			$path[0] = self::$outputDirectory.$path[0];
+			self::createDirectory($path[0]);
+		}
+		
+		for ($i = 1; $i < $folderStructureCount; $i++) {
+			$path[$i] = $path[$i-1].'/'.$path[$i];
+			self::createDirectory($path[$i]);
+		}
+		
+		file_put_contents(self::$outputDirectory.$file->getPathname(), $formattedSourceCode);
 	}
 	
 	protected static function createDirectory($path)

@@ -80,6 +80,13 @@ class Pear extends AbstractStandard {
 	);
 	protected $emptyLineBefore = array(
 		'T_DOC_COMMENT',
+		'T_RETURN',
+		'T_IF',
+		'T_FOR',
+		'T_FOREACH',
+		'T_WHILE',
+		'T_SWITCH',
+		'T_TRY',
 	);
 	protected $emptyLineAfter = array(
 		'T_FUNCTION_CLOSE_CURLY_BRACKET',
@@ -96,6 +103,8 @@ class Pear extends AbstractStandard {
 		'T_DOT',
 		'T_CATCH',
 		'T_AS',
+		'T_EXTENDS',
+		'T_IMPLEMENTS',
 	);
 	protected $spaceAfter = array(
 		'T_CLASS',
