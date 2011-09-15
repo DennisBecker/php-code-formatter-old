@@ -41,6 +41,7 @@
  * @link       https://github.com/DennisBecker/php-code-formatter
  */
 
+use PHP\CodeFormatter\Token;
 namespace PHP\CodeFormatter;
 
 /**
@@ -76,15 +77,21 @@ class Token {
 	protected $line;
 	
 	/**
+	 * @var Token
+	 */
+	protected $previousToken;
+	
+	/**
 	 * Create new Token instance
 	 * 
 	 * @param string $name
 	 * @param string $content
 	 */
-	public function __construct($name, $line, $content) {
+	public function __construct($name, $line, $content, $previousToken = null) {
 		$this->name = $name;
 		$this->content = $content;
 		$this->line = $line;
+		$this->previousToken = $previousToken;
 	}
 	
 	/**
@@ -103,5 +110,14 @@ class Token {
 	 */
 	public function getContent() {
 		return $this->content;
+	}
+	
+	/**
+	 * Get previous Token object
+	 * 
+	 *  @return Token
+	 */
+	public function getPreviousToken() {
+		return $this->previousToken;
 	}
 }

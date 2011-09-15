@@ -151,7 +151,7 @@ class Command
 		
 		$path = explode('/', $file->getPath());
 		$folderStructureCount = count($path);
-		if ($folderStructureCount > 0) {
+		if ($folderStructureCount > 1) {
 			$path[0] = self::$outputDirectory.$path[0];
 			self::createDirectory($path[0]);
 		}

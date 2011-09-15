@@ -59,6 +59,7 @@ class Pear extends AbstractStandard {
 	protected $newLineCharacter = "\n";
 	protected $indentCharacter = ' ';
 	protected $indentWidth = 4;
+	
 	protected $newLineBefore = array();
 	protected $newLineAfter = array(
 		'T_OPEN_TAG',
@@ -105,9 +106,31 @@ class Pear extends AbstractStandard {
 		'T_AS',
 		'T_EXTENDS',
 		'T_IMPLEMENTS',
+		'T_IS_EQUAL',
+		'T_IS_GREATER_OR_EQUAL',
+		'T_IS_IDENTICAL',
+		'T_IS_NOT_EQUAL',
+		'T_IS_NOT_IDENTICAL',
+		'T_IS_SMALLER_OR_EQUAL',
+		'T_AND_EQUAL',
+		'T_MINUS_EQUAL',
+		'T_MOD_EQUAL',
+		'T_MUL_EQUAL',
+		'T_DIV_EQUAL',
+		'T_XOR_EQUAL',
+		'T_CONCAT_EQUAL',
+		'T_LOGICAL_AND',
+		'T_LOGICAL_OR',
+		'T_LOGICAL_XOR',
+		'T_BOOLEAN_AND',
+		'T_BOOLEAN_OR',
 	);
 	protected $spaceAfter = array(
 		'T_CLASS',
+		'T_IMPLEMENTS',
+		'T_EXTENDS',
+		'T_FINAL',
+		'T_ABSTRACT',
 		'T_PUBLIC',
 		'T_PROTECTED',
 		'T_PRIVATE',
@@ -129,6 +152,26 @@ class Pear extends AbstractStandard {
 		'T_TRY',
 		'T_CATCH',
 		'T_AS',
+		'T_CLONE',
+		'T_ECHO',
+		'T_IS_EQUAL',
+		'T_IS_GREATER_OR_EQUAL',
+		'T_IS_IDENTICAL',
+		'T_IS_NOT_EQUAL',
+		'T_IS_NOT_IDENTICAL',
+		'T_IS_SMALLER_OR_EQUAL',
+		'T_AND_EQUAL',
+		'T_MINUS_EQUAL',
+		'T_MOD_EQUAL',
+		'T_MUL_EQUAL',
+		'T_DIV_EQUAL',
+		'T_XOR_EQUAL',
+		'T_CONCAT_EQUAL',
+		'T_LOGICAL_AND',
+		'T_LOGICAL_OR',
+		'T_LOGICAL_XOR',
+		'T_BOOLEAN_AND',
+		'T_BOOLEAN_OR',
 	);
 	protected $increaseThisLine = array();
 	protected $increaseNextLine = array(
