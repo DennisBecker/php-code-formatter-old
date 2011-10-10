@@ -7,14 +7,18 @@ code formatting tool which will make use of more modern PHP OOP.
 
 Planned Releases
 ----------------
-1. 0.1 Beta will have support for PEAR Coding Standard
-2. 0.2 Beta change to more OOP and write unit tests
+1. 0.1 alpha will have support for PEAR Coding Standard
+  - this release will be a proof-of-concept for experimental usage
+  - feedback highly appreciated
+2. 0.2 alpha refactoring code to OOP and add unit tests
+  - with this release I want to aim the goal of using modern PHP 5.3 OOP
 3. 0.3 beta will be a refactoring after analyzes with xhprof
 
 
 Version 1.0 will be released after beta phase
+PHP 5.4 support with traits will probably be released as an additional package
 
-Release Blockers for 0.1 Beta
+Release Blockers for 0.1 alpha
 -----------------------------
 - integrate nested array support
 - add Pirium PEAR channel on github
