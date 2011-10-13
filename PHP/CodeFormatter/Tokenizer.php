@@ -57,6 +57,10 @@ namespace PHP\CodeFormatter;
  */
 class Tokenizer
 {
+	protected $tokenCollection = array();
+	
+	protected $contextPostfix = null;
+	
 	/**
 	 * Stack of token names to match curly brackets
 	 * 
@@ -89,18 +93,10 @@ class Tokenizer
 		'T_WHILE',
 		'T_CATCH',
 		'T_SWITCH',
+		'T_ARRAY',
 	);
 	
-//	protected $curlyAfterRoundBrackets = array(
-//		'T_FUNCTION_CLOSE_ROUND_BRACKET',
-//		'T_IF_CLOSE_ROUND_BRACKET',
-//		'T_ELSEIF_CLOSE_ROUND_BRACKET',
-//		'T_FOR_CLOSE_ROUND_BRACKET',
-//		'T_FOREACH_CLOSE_ROUND_BRACKET',
-//		'T_WHILE_CLOSE_ROUND_BRACKET',
-//		'T_CATCH_CLOSE_ROUND_BRACKET',
-//		'T_SWITCH_CLOSE_ROUND_BRACKET',
-//	);
+	
 	
 	/**
 	 * Stack of token names to match round brackets
@@ -116,7 +112,7 @@ class Tokenizer
 	 */
 	public function tokenize($source)
 	{
-		$tokenCollection = array();
+		$this->tokenCollection = array();
 		$this->curlyBracketStack = array();
 		$this->roundBracketStack = array();
 		$tokenizedSource = token_get_all($source);
@@ -128,23 +124,41 @@ class Tokenizer
 				continue;
 			}
 			
-			$parsedSourceToken = array();
-			
-			if (is_array($sourceToken)) {
-				$parsedSourceToken = $sourceToken;
-				$parsedSourceToken[3] = token_name($sourceToken[0]);
-				
-//				$this->addTokenOntoStack($parsedSourceToken[3]);
-			} else {
-				$parsedSourceToken = $this->addTokenData($sourceToken, $previousToken);
-			}
-			
-			$tokenObject = new Token($parsedSourceToken[3], $parsedSourceToken[2], $parsedSourceToken[1], $previousToken);
-			$tokenCollection[] = $previousToken = $tokenObject;
-			$this->tokenCollection = $tokenCollection;
+			$tokenObject = $this->parseToken($sourceToken, $previousToken);
+			$this->tokenCollection[] = $previousToken = $tokenObject;
 		}
 		
-		return $tokenCollection;
+		return $this->tokenCollection;
+	}
+	
+	protected function parseToken($sourceToken, $previousToken) {
+		$parsedSourceToken = array();			
+		if (is_array($sourceToken)) {
+			$parsedSourceToken = $sourceToken;
+			$parsedSourceToken[3] = token_name($sourceToken[0]);
+		} else {
+			$parsedSourceToken = $this->addTokenData($sourceToken, $previousToken);
+		}
+		
+		$previousToken = $this->sanitizeCode($parsedSourceToken[3], $previousToken);
+		
+		$tokenObject = new Token($parsedSourceToken[3], $parsedSourceToken[2], $parsedSourceToken[1], $previousToken);
+		$this->setContext($tokenObject->getName());
+		return $tokenObject;
+	}
+	
+	protected function sanitizeCode($tokenName, $previousToken)
+	{
+		switch ($tokenName) {
+			case 'T_ARRAY_CLOSE_ROUND_BRACKET':
+				if ('T_COMMA_FOR_ARRAY' !== $previousToken->getName()) {
+					$previousToken = $this->parseToken(',', $previousToken);
+					$this->tokenCollection[] = $previousToken;
+				}
+				break;
+		}
+		
+		return $previousToken;
 	}
 	
 	/**
@@ -170,6 +184,7 @@ class Tokenizer
 			case 'T_FOR':
 			case 'T_FOREACH':
 			case 'T_WHILE':
+			case 'T_ARRAY':
 				array_unshift($this->roundBracketStack, $tokenName);
 				break;
 		}
@@ -240,7 +255,7 @@ class Tokenizer
 //				}
 				break;
 			case ',':
-				$tokenName = 'T_COMMA';
+				$tokenName = 'T_COMMA' . $this->contextPostfix;
 				break;
 			case '!':
 				$tokenName = 'T_EXCALMATION_MARK';
@@ -252,7 +267,7 @@ class Tokenizer
 				$tokenName = 'T_COLON';
 				break;
 			case ';':
-				$tokenName = 'T_SEMICOLON';
+				$tokenName = 'T_SEMICOLON' . $this->contextPostfix;
 				break;
 			case '+':
 				$tokenName = 'T_PLUS';
@@ -312,10 +327,6 @@ class Tokenizer
 				$tokenName = 'T_BACKTICK';
 				break;
 			default:
-				$count = count($this->tokenCollection);
-				var_dump($this->tokenCollection[$count-3]);
-				var_dump($this->tokenCollection[$count-2]);
-				var_dump($this->tokenCollection[$count-1]);
 				var_dump($sourceString);
 				die("\nMissing behaviour\n");
 		}
@@ -351,6 +362,21 @@ class Tokenizer
 			return $this->findPreviousControlTokenForRoundBracket($token->getPreviousToken());
 		} else {
 			return null;
+		}
+	}
+	
+	protected function setContext($tokenName) {
+		switch ($tokenName) {
+			case 'T_ARRAY_OPEN_ROUND_BRACKET':
+				$this->contextPostfix = '_FOR_ARRAY';
+				break;
+			case 'T_FOR_OPEN_ROUND_BRACKET':
+				$this->contextPostfix = '_IN_FOR';
+				break;
+			case 'T_SEMICOLON_FOR_ARRAY':
+			case 'T_FOR_CLOSE_ROUND_BRACKET':
+				$this->contextPostfix = null;
+				break;
 		}
 	}
 }

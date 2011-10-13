@@ -76,7 +76,15 @@ class Pear extends AbstractStandard {
 		'T_TRY_OPEN_CURLY_BRACKET',
 		'T_CATCH_OPEN_CURLY_BRACKET',
 		'T_CATCH_CLOSE_CURLY_BRACKET',
+		'T_SWITCH_OPEN_CURLY_BRACKET',
+		'T_SWITCH_CLOSE_CURLY_BRACKET',
+		'T_CASE_OPEN_CURLY_BRACKET',
+		'T_CASE_CLOSE_CURLY_BRACKET',
+		'T_ARRAY_OPEN_ROUND_BRACKET',
+		'T_COLON',
 		'T_SEMICOLON',
+		'T_SEMICOLON_FOR_ARRAY',
+		'T_COMMA_FOR_ARRAY',
 		'T_DOC_COMMENT',
 	);
 	protected $emptyLineBefore = array(
@@ -91,6 +99,7 @@ class Pear extends AbstractStandard {
 	);
 	protected $emptyLineAfter = array(
 		'T_FUNCTION_CLOSE_CURLY_BRACKET',
+		'T_SEMICOLON_FOR_ARRAY',
 	);
 	protected $spaceBefore = array(
 		'T_CLASS_OPEN_CURLY_BRACKET',
@@ -98,6 +107,7 @@ class Pear extends AbstractStandard {
 		'T_IF_OPEN_CURLY_BRACKET',
 		'T_FOR_OPEN_CURLY_BRACKET',
 		'T_FOREACH_OPEN_CURLY_BRACKET',
+		'T_SWITCH_OPEN_CURLY_BRACKET',
 		'T_PLUS',
 		'T_MINUS',
 		'T_EQUAL',
@@ -124,6 +134,7 @@ class Pear extends AbstractStandard {
 		'T_LOGICAL_XOR',
 		'T_BOOLEAN_AND',
 		'T_BOOLEAN_OR',
+		'T_DOUBLE_ARROW',
 	);
 	protected $spaceAfter = array(
 		'T_CLASS',
@@ -139,6 +150,8 @@ class Pear extends AbstractStandard {
 		'T_IF',
 		'T_FOR',
 		'T_FOREACH',
+		'T_SWITCH',
+		'T_CASE',
 		'T_THROW',
 		'T_NEW',
 		'T_RETURN',
@@ -172,6 +185,8 @@ class Pear extends AbstractStandard {
 		'T_LOGICAL_XOR',
 		'T_BOOLEAN_AND',
 		'T_BOOLEAN_OR',
+		'T_DOUBLE_ARROW',
+		'T_SEMICOLON_IN_FOR',
 	);
 	protected $increaseThisLine = array();
 	protected $increaseNextLine = array(
@@ -182,6 +197,7 @@ class Pear extends AbstractStandard {
 		'T_CATCH_OPEN_CURLY_BRACKET',
 		'T_FOR_OPEN_CURLY_BRACKET',
 		'T_FOREACH_OPEN_CURLY_BRACKET',
+		'T_ARRAY_OPEN_ROUND_BRACKET',
 	);
 	protected $decreaseThisLine = array(
 		'T_CLASS_CLOSE_CURLY_BRACKET',
@@ -191,6 +207,7 @@ class Pear extends AbstractStandard {
 		'T_CATCH_CLOSE_CURLY_BRACKET',
 		'T_FOR_CLOSE_CURLY_BRACKET',
 		'T_FOREACH_CLOSE_CURLY_BRACKET',
+		'T_ARRAY_CLOSE_ROUND_BRACKET',
 	);
 	protected $decreaseNextLine = array();
 	

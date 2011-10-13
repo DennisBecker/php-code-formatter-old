@@ -41,8 +41,8 @@
  * @link       https://github.com/DennisBecker/php-code-formatter
  */
 
-use PHP\CodeFormatter\Token;
 namespace PHP\CodeFormatter;
+use PHP\CodeFormatter\Token;
 
 /**
  * Token class represents one token of PHP source code
