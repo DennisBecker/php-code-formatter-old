@@ -18,6 +18,6 @@ code formatting tool which will make use of more modern PHP OOP.
 - PHP 5.4 support with traits will probably be released as an additional package
 
 ## Release Blockers for 0.1 alpha
-- integrate nested array support
+- integrate nested array support (implemented)
 - add Pirium PEAR channel on github
 - create PEAR package for PHP_CodeFormatter
