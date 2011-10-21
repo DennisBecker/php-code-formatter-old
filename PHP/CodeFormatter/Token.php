@@ -113,6 +113,15 @@ class Token {
 	}
 	
 	/**
+	 * Get original line of source code
+	 * 
+	 * @return int
+	 */
+	public function getLine() {
+		return $this->line;
+	}
+	
+	/**
 	 * Get previous Token object
 	 * 
 	 *  @return Token

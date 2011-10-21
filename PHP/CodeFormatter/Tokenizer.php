@@ -71,7 +71,7 @@ class Tokenizer
 	protected $curlyBrackets = array(
 		'T_CLASS',
 		'T_INTERFACE',
-		'T_CASE',
+//		'T_CASE',
 		'T_TRY',
 		'T_ELSE',
 		'T_FUNCTION_CLOSE_ROUND_BRACKET',
@@ -96,7 +96,9 @@ class Tokenizer
 		'T_ARRAY',
 	);
 	
-	
+	protected $noSpecialRoundBrackets = array(
+		'T_OBJECT_OPERATOR',
+	);
 	
 	/**
 	 * Stack of token names to match round brackets
@@ -124,18 +126,20 @@ class Tokenizer
 				continue;
 			}
 			
-			$tokenObject = $this->parseToken($sourceToken, $previousToken);
-			$this->tokenCollection[] = $previousToken = $tokenObject;
+			$object = $this->parseToken($sourceToken, $previousToken);
+			$this->tokenCollection[] = $previousToken = $object;
 		}
 		
 		return $this->tokenCollection;
 	}
 	
 	protected function parseToken($sourceToken, $previousToken) {
-		$parsedSourceToken = array();			
+		$parsedSourceToken = array();
+			
 		if (is_array($sourceToken)) {
 			$parsedSourceToken = $sourceToken;
 			$parsedSourceToken[3] = token_name($sourceToken[0]);
+			$this->addTokenOntoStack($parsedSourceToken[3]);
 		} else {
 			$parsedSourceToken = $this->addTokenData($sourceToken, $previousToken);
 		}
@@ -151,7 +155,8 @@ class Tokenizer
 	{
 		switch ($tokenName) {
 			case 'T_ARRAY_CLOSE_ROUND_BRACKET':
-				if ('T_COMMA_FOR_ARRAY' !== $previousToken->getName()) {
+				if ('T_COMMA_FOR_ARRAY' != $previousToken->getName()
+					&& 'T_ARRAY_OPEN_ROUND_BRACKET' != $previousToken->getName()) {
 					$previousToken = $this->parseToken(',', $previousToken);
 					$this->tokenCollection[] = $previousToken;
 				}
@@ -171,9 +176,7 @@ class Tokenizer
 		switch ($tokenName) {
 			case 'T_CLASS':
 			case 'T_INTERFACE':
-			case 'T_CASE':
 			case 'T_TRY':
-			case 'T_ELSE':
 				array_unshift($this->curlyBracketStack, $tokenName);
 				break;
 			case 'T_CATCH':
@@ -198,14 +201,9 @@ class Tokenizer
 	protected function addTokenData($sourceString, Token $previousToken)
 	{
 		$tokenName = '';
-		$controlTokenName = '';
+		$controlTokenName = null;
 		switch ($sourceString) {
 			case '{':
-//				if(!isset($this->curlyBracketStack[0])) {
-//					$tokenName = 'T_OPEN_CURLY_BRACKET';
-//				} else {
-//					$tokenName = $this->curlyBracketStack[0].'_OPEN_CURLY_BRACKET';
-//				}
 				$tokenName = 'T_OPEN_CURLY_BRACKET';
 				
 				$controlTokenName = $this->findPreviousControlTokenForCurlyBracket($previousToken);
@@ -217,42 +215,25 @@ class Tokenizer
 				array_unshift($this->curlyBracketStack, $tokenName);
 				break;
 			case '}':
-//				if(empty($this->curlyBracketStack)) {
-//					$tokenName = 'T_CLOSE_CURLY_BRACKET';
-//				} else {
-//					$tokenName = array_shift($this->curlyBracketStack).'_CLOSE_CURLY_BRACKET';
-//				}
 				$tokenName = array_shift($this->curlyBracketStack);
-//var_dump($tokenName);
 				$tokenName = str_replace('_OPEN_', '_CLOSE_', $tokenName);
-//				var_dump($tokenName);
 				break;
 			case '(':
 				$tokenName = 'T_OPEN_ROUND_BRACKET';
+
+				if (!function_exists($previousToken->getContent())) {
+					$controlTokenName = $this->findPreviousControlTokenForRoundBracket($previousToken);
+				}
 				
-				$controlTokenName = $this->findPreviousControlTokenForRoundBracket($previousToken);
-//				var_dump($sourceString);
-//				var_dump($previousToken->getPreviousToken()->getName());
-//				var_dump($previousToken->getPreviousToken()->getContent());
-//				var_dump($controlTokenName);
-//				die();
 				if (null !== $controlTokenName) {
 					$tokenName = $controlTokenName . '_OPEN_ROUND_BRACKET';
 				}
-//				if (in_array($previousToken->getName(), $this->roundBrackets)) {
-//					$tokenName = $previousToken->getName().'_OPEN_ROUND_BRACKET';
-//				}
-//				var_dump($sourceString);
-//				var_dump($tokenName);
-//				die();
+				
 				array_unshift($this->roundBracketStack, $tokenName);
 				break;
 			case ')':
-				$tokenName = str_replace('_OPEN_', '_CLOSE_', array_shift($this->roundBracketStack));
-//				var_dump($tokenName);
-//				if (in_array($tokenName, $this->curlyBrackets)) {
-//					array_unshift($this->curlyBracketStack, str_replace('_CLOSE_ROUND_BRACKET', '', $tokenName));
-//				}
+				$tokenName = array_shift($this->roundBracketStack);
+				$tokenName = str_replace('_OPEN_', '_CLOSE_', $tokenName);
 				break;
 			case ',':
 				$tokenName = 'T_COMMA' . $this->contextPostfix;
@@ -354,6 +335,8 @@ class Tokenizer
 	protected function findPreviousControlTokenForRoundBracket(Token $token) {
 		if (in_array($token->getName(), $this->roundBrackets)) {
 			return $token->getName();
+		} elseif (in_array($token->getName(), $this->noSpecialRoundBrackets)) {
+			return null;
 		} elseif (false !== strpos($token->getName(), 'OPEN_ROUND')) {
 			return null;
 		} elseif (false !== strpos($token->getName(), 'CLOSE_ROUND')) {

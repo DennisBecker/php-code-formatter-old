@@ -91,11 +91,11 @@ class Formatter
 	public function format($source)
 	{
 		$tokens = $this->tokenizer->tokenize($source);
+		
 		$this->standard->resetIndentation();
 		$this->lines = array();
 		$this->line = new SourceCodeLine($this->standard->getIndentationCharacter(),
 			$this->standard->getIndentationWidth(), 0);
-		
 		foreach ($tokens as $token) {
 			$tokenName = $token->getName();
 			$methodName = $this->buildMethodName($tokenName);

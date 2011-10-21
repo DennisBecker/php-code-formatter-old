@@ -82,7 +82,7 @@ class Command
 	{
 		self::$parser = new \Console_CommandLine();
 		self::$parser->description = 'PHP_CodeFormatter 0.1 by Dennis Becker';
-		self::$parser->version = '0.1';
+		self::$parser->version = '@PACKAGE_VERSION@';
 		self::$parser->addOption('standard', array(
 		    'long_name'   => '--standard',
 		    'description' => 'Coding Standard like PEAR',
@@ -146,12 +146,14 @@ class Command
 	protected static function parseFile($file)
 	{
 		echo $file->getPathname()."\n";
+		
 		$source = file_get_contents($file->getPathname());
 		$formattedSourceCode = self::$formatter->format($source);
 		
 		$path = explode('/', $file->getPath());
 		$folderStructureCount = count($path);
-		if ($folderStructureCount > 1) {
+		
+		if ($folderStructureCount > 1 && $path[0] != '') {
 			$path[0] = self::$outputDirectory.$path[0];
 			self::createDirectory($path[0]);
 		}

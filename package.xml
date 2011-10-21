@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.9.4" version="2.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0
+    http://pear.php.net/dtd/tasks-1.0.xsd
+    http://pear.php.net/dtd/package-2.0
+    http://pear.php.net/dtd/package-2.0.xsd">
+ <name>PHP_CodeFormatter</name>
+ <channel>dennisbecker.github.com/pear</channel>
+ <summary>PHP_CodeFormatter let`s you re-format your code so that it matches your coding standards</summary>
+ <description>PHP_CodeFormatter is designed to replace PHP_Beautifier. PHP_Beautifier has limitations for your coding standards, especially if you want to have different formats for curly braces for methods, classes etc. which PHP_CodeFormatter addresses and gives you a solution.</description>
+ <lead>
+  <name>Dennis Becker</name>
+  <user>DennisBecker</user>
+  <email>mail.dennisbecker@gmail.com</email>
+  <active>yes</active>
+ </lead>
+ <date>2011-10-20</date>
+ <time>17:13:53</time>
+ <version>
+  <release>0.1.0</release>
+  <api>0.1.0</api>
+ </version>
+ <stability>
+  <release>alpha</release>
+  <api>alpha</api>
+ </stability>
+ <license uri="http://opensource.org/licenses/bsd-license.php">New BSD License</license>
+ <notes>
+- 0.1.0 alpha version for testing
+ </notes>
+ <contents>
+  <dir baseinstalldir="/" name="/">
+   <dir name="PHP">
+    <dir name="CodeFormatter">
+     <dir name="Standards">
+      <file baseinstalldir="/" name="AbstractStandard.php" role="php">
+       <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+       <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+      </file>
+      <file baseinstalldir="/" name="Pear.php" role="php">
+       <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+       <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+      </file>
+      <file baseinstalldir="/" name="Sipgate.php" role="php">
+       <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+       <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+      </file>
+      <file baseinstalldir="/" name="StandardsFactory.php" role="php">
+       <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+       <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+      </file>
+     </dir> <!-- //PHP/CodeFormatter/Standards -->
+     <dir name="Token">
+      <file baseinstalldir="/" name="ClassToken.php" role="php">
+       <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+       <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+      </file>
+      <file baseinstalldir="/" name="DocCommentToken.php" role="php">
+       <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+       <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+      </file>
+      <file baseinstalldir="/" name="OpenTagToken.php" role="php">
+       <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+       <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+      </file>
+     </dir> <!-- //PHP/CodeFormatter/Token -->
+     <file baseinstalldir="/" name="Autoload.php" role="php">
+      <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+      <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+     </file>
+     <file baseinstalldir="/" name="Command.php" role="php">
+      <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+      <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+     </file>
+     <file baseinstalldir="/" name="FileHandler.php" role="php">
+      <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+      <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+     </file>
+     <file baseinstalldir="/" name="Formatter.php" role="php">
+      <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+      <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+     </file>
+     <file baseinstalldir="/" name="SourceCodeLine.php" role="php">
+      <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+      <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+     </file>
+     <file baseinstalldir="/" name="Token.php" role="php">
+      <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+      <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+     </file>
+     <file baseinstalldir="/" name="Tokenizer.php" role="php">
+      <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+      <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+     </file>
+    </dir> <!-- //PHP/CodeFormatter -->
+   </dir> <!-- //PHP -->
+   <file baseinstalldir="/" name="phpcf.sh" role="script">
+    <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+    <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+   </file>
+   <file baseinstalldir="/" name="PHP_CodeFormatter-0.1.0.tgz" role="data">
+    <tasks:replace from="@PHP_BIN@" to="php_bin" type="pear-config" />
+    <tasks:replace from="@PACKAGE_VERSION@" to="version" type="package-info" />
+   </file>
+  </dir> <!-- / -->
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.3</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.0</min>
+   </pearinstaller>
+   <package>
+    <name>PEAR</name>
+    <channel>pear.php.net</channel>
+    <min>1.4.0</min>
+   </package>
+   <package>
+    <name>Console_CommandLine</name>
+    <channel>pear.php.net</channel>
+    <min>1.1.3</min>
+   </package>
+   <package>
+    <name>PHP_Timer</name>
+    <channel>pear.phpunit.de</channel>
+    <min>1.0.2</min>
+   </package>
+   <package>
+    <name>DirectoryScanner</name>
+    <channel>pear.netpirates.net</channel>
+    <min>1.0.2</min>
+   </package>
+  </required>
+ </dependencies>
+ <phprelease>
+  <filelist>
+   <install as="phpcf" name="phpcf.sh" />
+  </filelist>
+ </phprelease>
+ <changelog>
+  <release>
+   <version>
+    <release>0.1.0</release>
+    <api>0.1.0</api>
+   </version>
+   <stability>
+    <release>alpha</release>
+    <api>alpha</api>
+   </stability>
+   <date>2011-10-20</date>
+   <license uri="http://opensource.org/licenses/bsd-license.php">New BSD License</license>
+   <notes>
+- 0.1.0 alpha version for testing
+   </notes>
+  </release>
+ </changelog>
+</package>
