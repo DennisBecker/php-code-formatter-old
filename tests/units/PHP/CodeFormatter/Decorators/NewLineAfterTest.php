@@ -2,10 +2,10 @@
 
 namespace PHP\CodeFormatter\Decorators;
 
-require_once 'PHPUnit\Framework\TestCase.php';
-require_once 'src\PHP\CodeFormatter\Decorators\DecoratorInterface.php';
-require_once 'src\PHP\CodeFormatter\Decorators\NewLine.php';
-require_once 'src\PHP\CodeFormatter\Decorators\NewLineAfter.php';
+require_once 'PHPUnit/Framework/TestCase.php';
+require_once '../../src/PHP/CodeFormatter/Decorators/DecoratorInterface.php';
+require_once '../../src/PHP/CodeFormatter/Decorators/NewLine.php';
+require_once '../../src/PHP/CodeFormatter/Decorators/NewLineAfter.php';
 
 /**
  * NewLineBefore test case.
