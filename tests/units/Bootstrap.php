@@ -1,2 +1,2 @@
 <?php
-require 'PHP/CodeFormatter/Autoload.php';
+require '../../src/PHP/Autoload.php';

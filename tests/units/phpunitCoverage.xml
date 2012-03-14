@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true"
+         backupGlobals="false"
+         strict="true">
+
+  <testsuite name="PHP_CodeFormatter">
+    <directory>PHP</directory>
+  </testsuite>
+  
+  <filter>
+    <whitelist addUncoveredFilesFromWhitelist="true">
+      <directory suffix=".php">../../src</directory>
+    </whitelist>
+  </filter>
+  
+  <logging>
+    <log type="coverage-clover" target="build/reports/coverage/coverage.xml"/>
+    <log type="coverage-html" target="build/reports/coverage/html"/>
+    <log type="junit" target="build/reports/phpunit.xml"/>
+  </logging>
+</phpunit>

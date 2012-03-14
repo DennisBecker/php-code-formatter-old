@@ -43,8 +43,6 @@
 
 namespace PHP\CodeFormatter;
 
-use PHP\CodeFormatter\Formatter;
-use PHP\CodeFormatter\Tokenizer;
 use PHP\CodeFormatter\Standards\StandardsFactory;
 use \TheSeer\Tools\DirectoryScanner;
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true"
+         backupGlobals="false"
+         strict="true">
+
+  <testsuite name="PHP_CodeFormatter">
+    <directory>PHP</directory>
+  </testsuite>
+</phpunit>
