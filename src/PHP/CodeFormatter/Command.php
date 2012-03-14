@@ -17,7 +17,7 @@
  *     the documentation and/or other materials provided with the
  *     distribution.
  *
- *   * Neither the name of Sebastian Bergmann nor the names of his
+ *   * Neither the name of Dennis Becker nor the names of his
  *     contributors may be used to endorse or promote products derived
  *     from this software without specific prior written permission.
  *
@@ -43,8 +43,6 @@
 
 namespace PHP\CodeFormatter;
 
-use PHP\CodeFormatter\Formatter;
-use PHP\CodeFormatter\Tokenizer;
 use PHP\CodeFormatter\Standards\StandardsFactory;
 use \TheSeer\Tools\DirectoryScanner;
 
