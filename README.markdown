@@ -1,23 +1,13 @@
+# PHP_CodeFormatter restart
+I will restart this project in a few weeks under https://github.com/DennisBecker/php-code-formatter due to
+the fact that I want to completely remove the old commits from the history. This project started as a prototype.
+With the lessons learned, I will create a code formatting tool which will use the decorator pattern for applying
+formatting rules to the tokens. More details will come in the new repository.
+
 # PHP_CodeFormatter
 PHP_CodeFormatter has been started due to the fact that PHP_Beautifier is
 extremly ugly to extend for your own coding standard. Other solutions like
 PHP_CodeBeautifier are even more worse. That's why I intend to recreate a nice
-code formatting tool which will make use of more modern PHP OOP.
-
-## Planned Releases
-- 0.1 alpha will have support for PEAR Coding Standard
-  - this release will be a proof-of-concept for experimental usage
-  - feedback highly appreciated
-- 0.2 alpha refactoring code to OOP and add unit tests
-  - with this release I want to aim the goal of using modern PHP 5.3 OOP
-- 0.5 beta will be a refactoring after analyzes with xhprof
-
-
-### Note
-- Version 1.0 will be released after beta phase
-- PHP 5.4 support with traits will probably be released as an additional package
-
-## Release Blockers for 0.1 alpha
-- integrate nested array support (implemented)
-- add Pirium PEAR channel on github
-- create PEAR package for PHP_CodeFormatter
+code formatting tool which will make use of more modern PHP OOP. This is just a
+protoype which helps me to find solutions for some problems you have with command
+line PHP tools.
